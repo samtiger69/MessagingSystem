@@ -1,0 +1,104 @@
+﻿@model Presentation.Models.ComposeMessage
+
+<link href="~/Content/MultiSelect.css" rel="stylesheet" />
+<h2>Compose Message</h2>
+
+@using (Html.BeginForm("ComposeMessage", "Outbox", FormMethod.Post))
+{
+    <div>
+        <fieldset>
+            <div class="row" style="padding-top:15px">
+                <dl class="dropdown">
+
+                    <dt>
+                        <a href="#">
+                            <span class="hida"> Receivers</span>
+                            <p class="multiSel"></p>
+                        </a>
+                    </dt>
+                    <dd>
+                        <div class="mutliSelect">
+                            <ul>
+                                @foreach (var user in Model.Users)
+                                {
+                                    if (Model.DefualtReceiver.HasValue && user.Id == Model.DefualtReceiver)
+                                    {
+                                        <li>
+                                            <input type="checkbox" value="@user.Username" name="Ids" class="chk" /> @user.Username
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <input type="checkbox" value="@user.Username" name="Ids" /> @user.Username
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Subject)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(u => u.Subject)
+                @Html.ValidationMessageFor(u => u.Subject)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Content)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(e => e.Content, 10, 55, null)
+                @Html.ValidationMessageFor(u => u.Content)
+            </div>
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <br />
+
+        </fieldset>
+    </div>
+    <input type="submit" class="btn btn-default" value="Send" />
+}
+
+<script>
+
+    $(".dropdown dt a").on('click', function () {
+        $(".dropdown dd ul").slideToggle('fast');
+    });
+
+    $(".dropdown dd ul li a").on('click', function () {
+        $(".dropdown dd ul").hide();
+    });
+
+    function getSelectedValue(id) {
+        return $("#" + id).find("dt a span.value").html();
+    }
+
+    $(document).bind('click', function (e) {
+        var $clicked = $(e.target);
+        if (!$clicked.parents().hasClass("dropdown")) $(".dropdown dd ul").hide();
+    });
+
+    $('.mutliSelect input[type="checkbox"]').on('click', function () {
+        var title = $(this).closest('.mutliSelect').find('input[type="checkbox"]').val(),
+          title = $(this).val() + ",";
+
+        if ($(this).is(':checked')) {
+            var html = '<span title="' + title + '">' + title + '</span>';
+            $('.multiSel').append(html);
+            $(".hida").hide();
+        } else {
+            $('span[title="' + title + '"]').remove();
+            var spans = $('.multiSel .span');
+            if (spans.length <= 0)
+            {
+                $('.hida').show();
+            }
+            var ret = $(".hida");
+            $('.dropdown dt a').append(ret);
+        }
+    });
+    $('.chk').click();
+</script>

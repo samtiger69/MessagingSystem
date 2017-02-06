@@ -1,0 +1,25 @@
+﻿@model Domain.Entities.Message
+
+<h2>@Model.Title</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <div class="jumbotron">
+            @Model.Content
+        </div>
+        <dt>
+            @Html.DisplayNameFor(model => model.SendDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SendDate)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to Outbox", "Index")
+</p>
+<p>
+    @Html.ActionLink("Delete Message", "DeleteMessage", new { messageId = Model.Id })
+</p>

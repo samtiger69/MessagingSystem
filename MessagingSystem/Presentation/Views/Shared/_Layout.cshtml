@@ -1,0 +1,106 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Amazing Messaging System</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/jquery-ui.css" rel="stylesheet" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/scripts/toastr.js"></script>
+    <script src="~/scripts/toastrImp.js"></script>
+    <script src="~/scripts/jquery.confirm.js"></script>
+    <link href="~/Content/toastr.min.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Amazing Messaging System", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li>@Html.ActionLink("Inbox", "Index", "Inbox")</li>
+                        <li>@Html.ActionLink("Outbox", "Index", "Outbox")</li>
+                        <li>@Html.ActionLink("Trash", "Index", "Trash")</li>
+                        @{
+                            var user = new Core.Implementation.UserService().GetUserByUsername(User.Identity.Name);
+                            if (user != null && user.UserTypeId <= (int)Domain.Entities.UserTypes.Admin)
+                        {
+                                <li>
+                                    @Html.ActionLink("Users", "UserList", "User")
+                                </li>
+                            }
+                            if (user != null && user.UserTypeId == (int)Domain.Entities.UserTypes.SuperAdmin)
+                            {
+                                <li>
+                                    @Html.ActionLink("Admins", "AdminList", "User")
+                                </li>
+                                <li>
+                                    @Html.ActionLink("Organizations", "Index", "Organization")
+                                </li>
+                            }
+                        }
+                        <li>@Html.ActionLink("Compose", "ComposeMessage", "Outbox")</li>
+                    </ul>
+
+                    @if (Request.IsAuthenticated)
+                {
+                    using (Html.BeginForm("Logout", "User", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                    {
+                            @Html.AntiForgeryToken()
+
+                            <ul class="nav navbar-nav navbar-right">
+                                <li>
+                                    <a href="">Hello @User.Identity.Name !</a>
+                                </li>
+                                <li><a href="javascript:document.getElementById('logoutForm').submit()">Log off</a></li>
+                            </ul>
+                        }
+                    }
+                </div>
+                            }
+
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Amazing Messaging System</p>
+        </footer>
+    </div>
+
+
+    <script>
+        var notifications = JSON.parse('@Html.Raw(Json.Encode(TempData["notes"]))');
+        if (notifications != null) {
+            for (var i = 0; i < notifications.length; i++) {
+                if (notifications[i].Type == 1) {
+                    displayError(notifications[i].Message);
+                }
+                if (notifications[i].Type == 2) {
+                    displaySuccess(notifications[i].Message);
+                }
+                if (notifications[i].Type == 3) {
+                    displayInfo(notifications[i].Message);
+                }
+                if (notifications[i].Type == 4) {
+                    displayWarning(notifications[i].Message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

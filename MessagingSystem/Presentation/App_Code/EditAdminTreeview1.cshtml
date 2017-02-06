@@ -1,0 +1,31 @@
+﻿@helper ShowTree(IList<Domain.Entities.Organization> organizations, IList<Domain.Entities.UserPermission> userPermissions)
+{
+    <ul class="list">
+        @foreach (var organization in organizations)
+        {
+            <li>
+                @if (userPermissions.FirstOrDefault(m => m.OrganizationId == organization.Id) != null)
+                {
+
+                    if (userPermissions.FirstOrDefault(m => m.OrganizationId == organization.Id && (m.PermissionType & Domain.Entities.PermissionType.SendGlobal) == Domain.Entities.PermissionType.SendGlobal) != null)
+                    {
+                        <input type="checkbox" name="SendingGlobalIdsTree" value="@organization.Id" class="TreeItem SendingGlobalIdsTree" />
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="SendingGlobalIdsTree" value="@organization.Id" class="TreeItem SendingLocalIdsTree" />
+                    }
+                }
+                else
+                {
+                    <input type="checkbox" name="SendingGlobalIds" value="@organization.Id" class="TreeItem" />
+                }
+                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> @organization.Name
+                @if (organization.Children.Any())
+                {
+                    @ShowTree(organization.Children, userPermissions)
+                }
+            </li>
+        }
+    </ul>
+}

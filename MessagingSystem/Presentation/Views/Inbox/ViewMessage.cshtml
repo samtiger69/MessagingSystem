@@ -1,0 +1,65 @@
+﻿@model Domain.Entities.UserMessage
+
+@{
+    ViewBag.Title = "View Message";
+}
+
+<h2>@Model.Message.Title</h2>
+@Html.HiddenFor(m=>m.messageId)
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <div class="jumbotron">
+            @Model.Message.Content
+        </div>
+        <dt>
+            @Html.DisplayName("From: ")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Message.Sender.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayName("Message Date: ")
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Message.SendDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to Inbox", "Index")
+</p>
+<p>
+    <a href="" id="simpleConfirm">Move to Trash</a>
+</p>
+<p>
+    @Html.ActionLink("Replay", "ComposeMessage", "Outbox", new { Id = Model.Message.SenderUserId }, null)
+</p>
+
+<script>
+    $("#simpleConfirm").confirm(
+        {
+            title: "Delete Confirmation",
+            text: "Are you sure?",
+            confirmButton: "Delete",
+            cancelButton: "Cancel",
+            post: false,
+            confirm: function (button) {
+                window.location.href = '/Inbox/TrashMessage?messageId=' + $('#messageId').val();
+            },
+            cancel: function (button) {
+                $('form input:checkbox').prop("checked", false);
+            },
+            submitForm: false,
+            confirmButtonClass: "btn-primary",
+            cancelButtonClass: "btn-default",
+            dialogClass: "modal-dialog",
+            modalOptionsBackdrop: true,
+            modalOptionsKeyboard: true
+        });
+</script>
+

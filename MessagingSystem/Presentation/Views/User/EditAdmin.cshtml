@@ -1,0 +1,158 @@
+﻿@model Presentation.Models.EditAdmin
+
+@{
+    ViewBag.Title = "Edit admin";
+}
+
+<h2>Edit @Model.Username</h2>
+
+@using (Html.BeginForm("EditAdmin", "User", FormMethod.Post, new { @class = "form-group" }))
+{
+    <div>
+        <fieldset>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Username)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(u => u.Username, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Username)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Password)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(u => u.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Password)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Name)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(u => u.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Name)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.OrganizationId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.OrganizationId, Model.OrganizationList, "-- Select Organization --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.OrganizationId)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.IsActive)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(u => u.IsActive)
+                @Html.ValidationMessageFor(u => u.IsActive)
+            </div>
+        </fieldset>
+    </div>
+
+    <br />
+    <br />
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Sending permissions</h3>
+            </div>
+            <div class="panel-body">
+                @{
+                    var org1 = new List<Domain.Entities.Organization>();
+                    org1.Add(Model.Root);
+                    @EditAdminTreeview1.ShowTree(org1, Model.UserPermissions)
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Admin permissions</h3>
+            </div>
+            <div class="panel-body">
+                @{
+                    var org2 = new List<Domain.Entities.Organization>();
+                    org2.Add(Model.Root);
+                    @EditAdminTreeview2.ShowTree(org2, Model.AdminPermissions)
+                }
+
+            </div>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-default" value="Submit" />
+                    }
+<script>
+    $('.TreeItem').click(function () {
+        if ($(this).hasClass('some_selected')) {
+
+            $(this).removeClass('some_selected').addClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("name", 'SendingGlobalIds');
+            $(this).prop("checked", true);
+        }
+
+        else if ($(this).hasClass('all_selected')) {
+
+            $(this).removeClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("checked", false);
+            $(this).prop("name", 'SendingGlobalIds');
+        }
+
+        else {
+            $(this).addClass('some_selected');
+            $(this).prop("indeterminate", true);
+            $(this).prop("name", 'SendingLocalIds');
+            $(this).prop("checked", true);
+        }
+    });
+
+    $('.AdminTree').click(function () {
+        if ($(this).hasClass('some_selected')) {
+
+            $(this).removeClass('some_selected').addClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("name", 'AdminGlobalIds');
+            $(this).prop("checked", true);
+        }
+
+        else if ($(this).hasClass('all_selected')) {
+
+            $(this).removeClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("checked", false);
+            $(this).prop("name", 'AdminGlobalIds');
+        }
+
+        else {
+            $(this).addClass('some_selected');
+            $(this).prop("indeterminate", true);
+            $(this).prop("name", 'AdminLocalIds');
+            $(this).prop("checked", true);
+        }
+    });
+
+    $('.list > li span').click(function () {
+        $(this).parent().find('ul').toggle();
+        var hasPlusClass = $(this).hasClass('glyphicon-plus');
+        if (hasPlusClass) {
+            $(this).removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        }
+        else {
+            $(this).removeClass('glyphicon-minus').addClass('glyphicon-plus');
+        }
+    });
+
+    $('.SendingGlobalIdsTree').trigger('click');
+    $('.SendingGlobalIdsTree').click();
+
+    $('.SendingLocalIdsTree').click();
+
+    $('.AdminGlobalIdsTree').click();
+    $('.AdminGlobalIdsTree').click();
+
+    $('.AdminLocalIdsTree').click();
+</script>

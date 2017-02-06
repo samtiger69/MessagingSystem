@@ -1,0 +1,167 @@
+﻿@model Presentation.Models.EditUser
+
+@{
+    ViewBag.Title = "Edit user";
+}
+
+<h2>Edit @Model.Username</h2>
+
+@using (Html.BeginForm("EditUser", "User", FormMethod.Post))
+{
+    <div>
+        <fieldset>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Username)
+            </div>
+            <div class="form-group">
+                @Html.TextBoxFor(u => u.Username, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Username)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Password)
+            </div>
+            <div class="editor-field">
+                @Html.PasswordFor(u => u.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Password)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.Name)
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(u => u.Name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.Name)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.OrganizationId)
+            </div>
+            <div class="editor-field">
+                @Html.DropDownListFor(model => model.OrganizationId, Model.OrganizationList, "-- Select Organization --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(u => u.OrganizationId)
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(u => u.IsActive)
+            </div>
+            <div class="editor-field">
+                @Html.EditorFor(u => u.IsActive)
+                @Html.ValidationMessageFor(u => u.IsActive)
+            </div>
+        </fieldset>
+    </div>
+
+    <br />
+    <br />
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Sending permissions</h3>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    @{
+
+                        foreach (var organization in Model.AdminOrganizations)
+                        {
+                            var userPermissions = Model.UserPermissions.FirstOrDefault(m => m.OrganizationId == organization.Id);
+                            var adminPermission = Model.AdminPermissions.FirstOrDefault(m => m.OrganizationId == organization.Id);
+
+                            // User has previous permissions.
+                            if (userPermissions != null)
+                            {
+
+                                // Global sending permissions.
+                                if ((userPermissions.PermissionType & Domain.Entities.PermissionType.SendGlobal) == Domain.Entities.PermissionType.SendGlobal)
+                                {
+                                    <p>
+                                        <input type="checkbox" name="GlobalSendingIds" value="@organization.Id" class="TriState" checked="checked" /> @organization.Name
+                                    </p>
+                                }
+                                // Local sending permissions
+                                else
+                                {
+                                    // admin has global permissions.
+                                    if (adminPermission != null)
+                                    {
+                                        if ((adminPermission.PermissionType & Domain.Entities.PermissionType.AdminGlobal) == Domain.Entities.PermissionType.AdminGlobal)
+                                        {
+                                            <p>
+                                                <input type="checkbox" name="GlobalSendingIds" value="@organization.Id" class="TriState localSendingPermissions" /> @organization.Name
+                                            </p>
+                                        }
+
+                                        else
+                                        {
+                                            <p>
+                                                <input type="checkbox" name="LocalSendingIds" value="@organization.Id" checked="checked" /> @organization.Name
+                                            </p>
+                                        }
+
+                                    }
+
+                                    // admin has local permissions.
+                                    else
+                                    {
+                                        <p>
+                                            <input type="checkbox" name="LocalSendingIds" value="@organization.Id" checked="checked" /> @organization.Name
+                                        </p>
+                                    }
+                                }
+                            }
+
+                            // User has no previous permissions.
+                            else
+                            {
+                                // admin has global permissions.
+                                if (adminPermission == null || (adminPermission.PermissionType & Domain.Entities.PermissionType.AdminGlobal) == Domain.Entities.PermissionType.AdminGlobal)
+                                {
+                                    <p>
+                                        <input type="checkbox" name="GlobalSendingIds" value="@organization.Id" class="TriState" /> @organization.Name
+                                    </p>
+                                }
+
+                                // admin has local permissions.
+                                else
+                                {
+                                    <p>
+                                        <input type="checkbox" name="LocalSendingIds" value="@organization.Id" /> @organization.Name
+                                    </p>
+                                }
+                            }
+                        }
+
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-default" value="Submit" />
+                        }
+<script>
+
+    $('.TriState').click(function () {
+        if ($(this).hasClass('some_selected')) {
+
+            $(this).removeClass('some_selected').addClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("name", 'GlobalSendingIds');
+            $(this).prop("checked", true);
+        }
+
+        else if ($(this).hasClass('all_selected')) {
+
+            $(this).removeClass('all_selected');
+            $(this).prop("indeterminate", false);
+            $(this).prop("checked", false);
+            $(this).prop("name", 'GlobalSendingIds');
+        }
+
+        else {
+            $(this).addClass('some_selected');
+            $(this).prop("indeterminate", true);
+            $(this).prop("name", 'LocalSendingIds');
+            $(this).prop("checked", true);
+        }
+    });
+    $(".localSendingPermissions").click();
+
+</script>

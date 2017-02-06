@@ -1,0 +1,106 @@
+﻿@model Presentation.ViewModel.OutboxViewModel
+@using Domain.Entities;
+@{
+    ViewBag.Title = "Outbox";
+}
+
+<h2>Outbox</h2>
+<br />
+@using (Html.BeginForm("Index", "Outbox", FormMethod.Post, new { @id = "deleteMessages" }))
+{
+    <table class="table  table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in @Model.Messages)
+            {
+                <tr>
+                    <td><input type="checkbox" name="Ids" value="@item.Id" class="cb"/></td>
+                    <td>@Html.ActionLink(item.Title, "ViewMessage", new { messageId = item.Id })</td>
+                    <td>@item.SendDate</td>
+                    <td>
+                        <ul class="nav nav-pills">
+                            <li role="presentation" class="dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                    Receivers <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var v in item.messageReceivers)
+                                    {
+                                        <li style="text-align:center">@v.Username</li>
+                                    }
+                                </ul>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    <input type="button" id="simpleConfirm" class="btn btn-primary" value="Delete" />
+                    <ul class="pagination pull-right">
+                        @for (int pagenum = 1; pagenum <= @Model.PagerCount; pagenum++)
+                        {
+                            <li class="paginate_button"><a href="@Url.Action("Index", "Outbox", new { pageNumber = @pagenum, Notifications = (List<Presentation.Models.NotificationModel>)null})" aria-controls="example" data-dt-idx="2" tabindex="0">@pagenum</a></li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}
+<script>
+    var counter = 0;
+    $('#simpleConfirm').attr("disabled", true);
+
+    $(document).ready(function() {
+        $('.cb').change(function () {
+            if (this.checked) {
+                counter++;
+            }
+            else {
+                counter--;
+            }
+            if (counter > 0) {
+
+                $('#simpleConfirm').attr("disabled", false);
+            }
+            else {
+                $('#simpleConfirm').attr("disabled", true);
+            }
+        });
+    });
+
+
+    $("#simpleConfirm").confirm(
+        {
+            title: "Delete Confirmation",
+            text: "Are you sure?",
+            confirmButton: "Delete",
+            cancelButton: "Cancel",
+            post: false,
+            confirm: function (button) {
+                $("#deleteMessages").submit();
+            },
+            cancel: function (button) {
+                $('form input:checkbox').prop("checked", false);
+                counter = 0;
+                $('#simpleConfirm').attr("disabled", true);
+            },
+            submitForm: false,
+            confirmButtonClass: "btn-primary",
+            cancelButtonClass: "btn-default",
+            dialogClass: "modal-dialog",
+            modalOptionsBackdrop: true,
+            modalOptionsKeyboard: true
+        });
+
+
+</script>

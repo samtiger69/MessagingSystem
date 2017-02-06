@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Domain.Entities.Organization>
+
+@{
+    ViewBag.Title = "Organizations";
+}
+
+<h3>Organization list</h3>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            Organization Name
+        </th>
+        <th>
+            Parent Organization Name
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.ActionLink(item.Name, "Edit", new { organizationId = item.Id })
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ParentOrganization.Name)
+        </td>
+    </tr>
+}
+
+</table>

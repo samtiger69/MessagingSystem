@@ -1,0 +1,41 @@
+﻿@model Domain.Entities.UserMessage
+
+@{
+    ViewBag.Title = "ViewMessage";
+}
+
+<h2>@Model.Message.Title</h2>
+
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <div class="jumbotron">
+            @Model.Message.Content
+        </div>
+        <dt>
+            @Html.DisplayNameFor(model => model.Message.SendDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Message.SendDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Message.SenderUserId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Message.Sender.Name)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Back to Trash box", "Index")
+</p>
+<p>
+    @Html.ActionLink("Delete Message", "DeleteMessage", new { messageId = Model.messageId })
+</p>
+<p>
+    @Html.ActionLink("Return Message to Inbox", "RestoreMessage", new { messageId = Model.messageId })
+</p>

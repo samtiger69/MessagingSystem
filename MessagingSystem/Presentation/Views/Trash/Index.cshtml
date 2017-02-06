@@ -1,0 +1,109 @@
+﻿@model Presentation.ViewModel.InboxViewModel
+@using System.Web.Helpers;
+@using Domain.Entities;
+
+@{
+    ViewBag.Title = "Trash";
+}
+
+<h2>Trash Box</h2>
+<br />
+@using (Html.BeginForm("Index", "Trash", FormMethod.Post, new { @id = "deleteMessages" }))
+{
+    <table class="table  table-hover">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Subject</th>
+                <th>From</th>
+                <th>Date</th>
+                <th>Restore</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in @Model.Messages)
+            {
+                if ((int)(item.messageStatus & MessageStatus.Read) != (int)MessageStatus.Read)
+                {
+                    <tr>
+                        <td><input type="checkbox" name="Ids" value="@item.messageId" class="cb" /></td>
+                        <td><b>@Html.ActionLink(item.Message.Title, "ViewMessage", new { messageId = item.messageId })</b></td>
+                        <td><b>@item.Message.Sender.Name</b></td>
+                        <td><b>@item.Message.SendDate</b></td>
+                        <td><b>@Html.ActionLink("Restore", "RestoreMessage", new { messageId = item.messageId })</b></td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td><input type="checkbox" name="Ids" value="@item.messageId" class="cb"/></td>
+                        <td>@Html.ActionLink(item.Message.Title, "ViewMessage", new { messageId = item.messageId })</td>
+                        <td>@item.Message.Sender.Name</td>
+                        <td>@item.Message.SendDate</td>
+                        <td>@Html.ActionLink("Restore", "RestoreMessage", new { messageId = item.messageId })</td>
+                    </tr>
+                }
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="5">
+                    @*<a id="simpleConfirm" href="" class="btn btn-primary">Delete</a>*@
+                    <input type="button" id="simpleConfirm" class="btn btn-primary" value="Delete" />
+                    <ul class="pagination pull-right">
+                        @for (int pagenum = 1; pagenum <= @Model.PagerCount; pagenum++)
+                        {
+                            <li class="paginate_button"><a href="@Url.Action("Inbox", "Message", new { pageNumber = @pagenum })" aria-controls="example" data-dt-idx="2" tabindex="0">@pagenum</a></li>
+                        }
+                    </ul>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+}
+
+<script>
+    var counter = 0;
+    $('#simpleConfirm').attr("disabled", true);
+
+    $(document).ready(function () {
+        $('.cb').change(function () {
+            if (this.checked) {
+                counter++;
+            }
+            else {
+                counter--;
+            }
+            if (counter > 0) {
+
+                $('#simpleConfirm').attr("disabled", false);
+            }
+            else {
+                $('#simpleConfirm').attr("disabled", true);
+            }
+        });
+    });
+
+    $("#simpleConfirm").confirm(
+        {
+            title: "Delete Confirmation",
+            text: "Are you sure?",
+            confirmButton: "Delete",
+            cancelButton: "Cancel",
+            post: false,
+            confirm: function (button) {
+                $("#deleteMessages").submit();
+            },
+            cancel: function (button) {
+                $('form input:checkbox').prop("checked", false);
+                counter = 0;
+                $('#simpleConfirm').attr("disabled", true);
+            },
+            submitForm: false,
+            confirmButtonClass: "btn-primary",
+            cancelButtonClass: "btn-default",
+            dialogClass: "modal-dialog",
+            modalOptionsBackdrop: true,
+            modalOptionsKeyboard: true
+        });
+</script>
