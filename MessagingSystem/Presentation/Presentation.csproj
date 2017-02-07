@@ -154,11 +154,11 @@
     <Content Include="Global.asax" />
     <Content Include="scripts\ai.0.15.0-build58334.js" />
     <Content Include="scripts\ai.0.15.0-build58334.min.js" />
-    <Content Include="App_Code\Treeview.cshtml" />
-    <Content Include="App_Code\CreateAdminTreeview1.cshtml" />
-    <Content Include="App_Code\CreateAdminTreeview2.cshtml" />
-    <Content Include="App_Code\EditAdminTreeview1.cshtml" />
-    <Content Include="App_Code\EditAdminTreeview2.cshtml" />
+    <Content Include="Views\Shared\Treeview.cshtml" />
+    <Content Include="Views\Shared\CreateAdminTreeview1.cshtml" />
+    <Content Include="Views\Shared\CreateAdminTreeview2.cshtml" />
+    <Content Include="Views\Shared\EditAdminTreeview1.cshtml" />
+    <Content Include="Views\Shared\EditAdminTreeview2.cshtml" />
     <Content Include="Content\toastr.scss" />
     <Content Include="Content\toastr.less" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -256,6 +256,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
